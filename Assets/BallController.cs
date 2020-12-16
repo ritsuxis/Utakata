@@ -4,27 +4,30 @@ using UnityEngine;
 
 public class BallController : MonoBehaviour
 {
-    // Start is calld before the first frame update
-    void Start(){
-        
+    private float ballSpeed = 30f;
+    private Rigidbody rb;
+    private bool needPush; // AddForceする必要があるかどうか
+    // Start is called before the first frame update
+    void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+        needPush = false;
     }
 
     // Update is called once per frame
-    void Update() {
-        // キーコンフィグできるようにしたい
-        if (Input.GetMouseButton(0)) {
-            this.transform.Rotate(0f, 0f, 1f, Space.Self);
-            if (!NowAngleis()) this.transform.Rotate(0f, 0f, -1f, Space.Self);
-        } else if (Input.GetMouseButton(1)) {
-            this.transform.Rotate(0f, 0f, -1f, Space.Self);
-            if (!NowAngleis()) this.transform.Rotate(0f, 0f, 1f, Space.Self);
+    void Update()
+    {
+        if (!needPush && (Input.GetMouseButtonDown(2) || Input.GetKeyDown("space"))) { // キーコンフィグできるようにしたい
+            rb.AddForce(transform.forward * ballSpeed, ForceMode.Impulse); // Push
+            this.transform.parent = null; // 親子関係を解消することでChangeAngleで角度を変更しても影響がない
+            needPush = true; // 一度だけAddForceする
         }
-        Debug.Log(this.transform.localEulerAngles.z);
     }
 
-    bool NowAngleis() {
-        var angle = this.transform.localEulerAngles.z; // 0~360の値で得られる
-        if (angle < 90f || 270f < angle) return true;
-        else return false;
+    private void OnCollisionEnter(Collision collision) {
+        if (collision.gameObject.tag == "Ball" || collision.gameObject.tag == "UpperWall") {
+            rb.velocity = Vector3.zero;
+            rb.constraints = RigidbodyConstraints.FreezeAll;
+        }
     }
 }
