@@ -4,30 +4,34 @@ using UnityEngine;
 
 public class BallController : MonoBehaviour
 {
-    private float ballSpeed = 30f;
-    private Rigidbody rb;
     private bool needPush; // AddForceする必要があるかどうか
+    float delta;
+    float span;
+    Vector3 angle;
     // Start is called before the first frame update
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
         needPush = false;
+        delta = 0.0f;
+        span = 0.015f;
     }
 
     // Update is called once per frame
     void Update()
     {
         if (!needPush && (Input.GetMouseButtonDown(2) || Input.GetKeyDown("space"))) { // キーコンフィグできるようにしたい
-            rb.AddForce(transform.forward * ballSpeed, ForceMode.Impulse); // Push
             this.transform.parent = null; // 親子関係を解消することでChangeAngleで角度を変更しても影響がない
-            needPush = true; // 一度だけAddForceする
-        }
-    }
-
-    private void OnCollisionEnter(Collision collision) {
-        if (collision.gameObject.tag == "Ball" || collision.gameObject.tag == "UpperWall") {
-            rb.velocity = Vector3.zero;
-            rb.constraints = RigidbodyConstraints.FreezeAll;
+            needPush = true; // 撃たれるのは一度だけ
+            angle = transform.forward;
+        }else if (needPush) {
+            this.delta += Time.deltaTime;
+            if (this.delta > this.span) {
+                this.delta = 0.0f;
+                transform.position += angle;
+                if (transform.position.x > 9 || transform.position.x < -9) {
+                    angle = new Vector3(-angle.x, angle.y, angle.z);
+                }
+            }
         }
     }
 }
