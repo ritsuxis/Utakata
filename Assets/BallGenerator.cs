@@ -14,7 +14,7 @@ public class BallGenerator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown("a")) {
+        if (Input.GetKeyDown("s")) {
             Instantiate(prefabBall, parentObject);
         }
     }

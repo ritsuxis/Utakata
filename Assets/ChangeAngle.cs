@@ -12,14 +12,14 @@ public class ChangeAngle : MonoBehaviour
     // Update is called once per frame
     void Update() {
         // キーコンフィグできるようにしたい
-        if (Input.GetMouseButton(0)) {
+        if (Input.GetMouseButton(0) || Input.GetKey("a")) {
             this.transform.Rotate(0f, 0f, 1f, Space.Self);
-            if (!NowAngleis()) this.transform.Rotate(0f, 0f, -1f, Space.Self);
-        } else if (Input.GetMouseButton(1)) {
+            if (!NowAngleis()) this.transform.Rotate(0f, 0f, -0.5f, Space.Self);
+        } else if (Input.GetMouseButton(1) || Input.GetKey("d")) {
             this.transform.Rotate(0f, 0f, -1f, Space.Self);
-            if (!NowAngleis()) this.transform.Rotate(0f, 0f, 1f, Space.Self);
+            if (!NowAngleis()) this.transform.Rotate(0f, 0f, 0.5f, Space.Self);
         }
-        Debug.Log(this.transform.localEulerAngles.z);
+        // Debug.Log(this.transform.localEulerAngles.z);
     }
 
     bool NowAngleis() {
